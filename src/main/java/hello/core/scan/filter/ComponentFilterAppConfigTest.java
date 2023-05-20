@@ -15,7 +15,6 @@ public class ComponentFilterAppConfigTest {
         ApplicationContext ac =
                 new AnnotationConfigApplicationContext(ComponentFilterAppConfig.class);
         BeanA beanA = ac.getBean("beanA", BeanA.class);
-        System.out.println("beanA = " + beanA);
     }
 
     @Configuration
