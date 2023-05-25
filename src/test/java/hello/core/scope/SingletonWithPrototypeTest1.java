@@ -12,30 +12,63 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SingletonWithPrototypeTest1 {
     @Test
     void prototypeFind() {
-        AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(PrototypeTest.PrototypeBean.class);
-        System.out.println("find prototypeBean1");
-        PrototypeTest.PrototypeBean prototypeBean1 = ac.getBean(PrototypeTest.PrototypeBean.class);
-        System.out.println("find prototypeBean2");
-        PrototypeTest.PrototypeBean prototypeBean2 = ac.getBean(PrototypeTest.PrototypeBean.class);
+        AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(PrototypeBean.class);
+        PrototypeBean prototypeBean1 = ac.getBean(PrototypeBean.class);
 
-        System.out.println("prototypeBean1 = " + prototypeBean1);
-        System.out.println("prototypeBean2 = " + prototypeBean2);
+        PrototypeBean prototypeBean2 = ac.getBean(PrototypeBean.class);
+        prototypeBean1.addCount();
+        prototypeBean2.addCount();
 
-        assertThat(prototypeBean1).isNotSameAs(prototypeBean2);
-        ac.close();
+        assertThat(prototypeBean1.getCount()).isSameAs(1);
+        assertThat(prototypeBean2.getCount()).isSameAs(1);
+
+    }
+
+    @Test
+    void singletonBeanUsePrototypeBeanTest(){
+        AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(ClientBean.class, PrototypeBean.class);
+
+        ClientBean cb = ac.getBean(ClientBean.class);
+        cb.prototypeBean.addCount();
+        assertThat(cb.prototypeBean.getCount()).isEqualTo(1);
+
+        cb.prototypeBean.addCount();
+        assertThat(cb.prototypeBean.getCount()).isEqualTo(2);
+
+
+    }
+
+    @Scope("singleton")
+    static class ClientBean {
+        private PrototypeBean prototypeBean;
+
+
+        public ClientBean(PrototypeBean prototypeBean) {
+            this.prototypeBean = prototypeBean;
+        }
     }
 
     @Scope("prototype")
     static class PrototypeBean {
 
+        private int count = 0;
+
+        public void addCount() {
+            count++;
+        }
+
+        public int getCount() {
+            return count;
+        }
+
         @PostConstruct
         public void init() {
-            System.out.println("PrototypeTest.init");
+            System.out.println("PrototypeBean.init" + this);
         }
 
         @PreDestroy
         public void destroy() {
-            System.out.println("PrototypeTest.destroy");
+            System.out.println("PrototypeBean.destroy");
         }
 
     }
