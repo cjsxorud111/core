@@ -1,6 +1,8 @@
 package hello.core.scope;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Scope;
 
@@ -28,23 +30,28 @@ public class SingletonWithPrototypeTest1 {
     void singletonBeanUsePrototypeBeanTest(){
         AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext(ClientBean.class, PrototypeBean.class);
 
-        ClientBean cb = ac.getBean(ClientBean.class);
-        cb.prototypeBean.addCount();
-        assertThat(cb.prototypeBean.getCount()).isEqualTo(1);
-
-        cb.prototypeBean.addCount();
-        assertThat(cb.prototypeBean.getCount()).isEqualTo(2);
+        ClientBean cb1 = ac.getBean(ClientBean.class);
+        int count1 = cb1.logic();
+        assertThat(count1).isEqualTo(1);
 
 
+        ClientBean cb2 = ac.getBean(ClientBean.class);
+        int count2 = cb2.logic();
+        assertThat(count2).isEqualTo(1);
     }
 
     @Scope("singleton")
     static class ClientBean {
         private PrototypeBean prototypeBean;
 
+        @Autowired
+        private ObjectProvider<PrototypeBean> prototypeBeanProvider;
 
-        public ClientBean(PrototypeBean prototypeBean) {
-            this.prototypeBean = prototypeBean;
+        public int logic() {
+            PrototypeBean prototypeBean1 = prototypeBeanProvider.getObject();
+            prototypeBean1.addCount();
+            int count = prototypeBean1.getCount();
+            return count;
         }
     }
 
