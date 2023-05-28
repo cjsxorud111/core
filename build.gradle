@@ -15,7 +15,9 @@ repositories {
 dependencies {
 	implementation 'javax.inject:javax.inject:1'
 	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
