@@ -13,6 +13,7 @@ repositories {
 }
 
 dependencies {
+	implementation 'javax.inject:javax.inject:1'
 	implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 	compileOnly 'org.projectlombok:lombok'
